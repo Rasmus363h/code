@@ -1,20 +1,29 @@
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
+builder.Services.AddEndpointsApiExplorer();
+if (builder.Environment.IsDevelopment())
+{
+    builder.Services.AddSwaggerGen(c =>
+    {
+        c.SwaggerDoc("v1", new OpenApiInfo { Title = "Todo API", Description = "Keep track of your tasks", Version = "v1" });
+    });
+}
+
 var app = builder.Build();
 
-app.MapGet("/", () => "Hello World!");
-builder.Services.AddEndpointsApiExplorer();
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-   builder.Services.AddSwaggerGen(c =>
-     {
-       c.SwaggerDoc("v1", new OpenApiInfo { Title = "Todo API", Description = "Keep track of your tasks", Version = "v1" });
-     });
-   app.UseSwagger();
-   app.UseSwaggerUI(c =>
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
     {
-      c.SwaggerEndpoint("/swagger/v1/swagger.json", "Todo API V1");
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Todo API V1");
     });
-} // end of if (app.Environment.IsDevelopment()) block
+}
+
+app.MapGet("/", () => "Hello World!");
+
 app.Run();
